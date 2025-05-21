@@ -1,3 +1,7 @@
-title: My Website
-description: Jekyll website hosted by Github Pages
+title: My Site
+description: Powered by Jekyll and Github Pages
 theme: minima
+
+collections:
+  projects:
+    output: true
