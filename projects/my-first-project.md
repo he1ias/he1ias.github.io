@@ -1,7 +1,6 @@
-# _projects/my-first-project.md
 ---
 layout: entry
-title: "My First Project"
+title: "Test Project"
 type: project
 ---
 
