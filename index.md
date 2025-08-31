@@ -1,6 +1,12 @@
 ---
-layout: home
-title: Welcome
+layout: default
+title: Home
 ---
 
-This is my Jekyll-powered GitHub Pages site!
+# Posts
+<ul>
+  {% assign pages_list = site.pages | where_exp: "p", "p.path contains 'posts/'" %}
+  {% for p in pages_list %}
+    <li><a href="{{ p.url }}">{{ p.title }}</a></li>
+  {% endfor %}
+</ul>

@@ -1,7 +1,2 @@
-title: he1ias
-description: Powered by Jekyll and Github Pages
-theme: None
-
-collections:
-  projects:
-    output: true
+title: "he1ias"
+description: "This is a description."
