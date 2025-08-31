@@ -5,8 +5,8 @@ title: Home
 
 # Posts
 <ul>
-  {% assign pages_list = site.pages | where_exp: "p", "p.path contains 'posts/'" %}
-  {% for p in pages_list %}
-    <li><a href="{{ p.url }}">{{ p.title }}</a></li>
-  {% endfor %}
+    {% assign list = site.pages | where_exp: "page", "page.path contains 'posts/'" %}
+    {% for page in list %}
+        <li><a href = "{{ page.url }}">{{ page.title }}</a></li>
+    {% endfor %}
 </ul>
