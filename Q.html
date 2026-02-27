@@ -1,0 +1,295 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #f4f6f9;
+        padding: 16px;
+        color: #222;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        margin-bottom: 20px;
+    }
+
+    th {
+        background: #111827;
+        color: white;
+        font-weight: 600;
+        padding: 14px 10px;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    td {
+        padding: 14px 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 15px;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Ladder highlight */
+    #ladder tr.highlight {
+        background: #e6f4ff;
+        font-weight: 600;
+    }
+
+    /* Radio buttons styled like toggle */
+    form {
+        display: flex;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        margin-bottom: 20px;
+    }
+
+    form div {
+        flex: 1;
+    }
+
+    input[type="radio"] {
+        display: none;
+    }
+
+    form label {
+        display: block;
+        text-align: center;
+        padding: 14px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    input[type="radio"]:checked + label {
+        background: #111827;
+        color: white;
+    }
+
+    /* Data table formatting */
+    #data th {
+        width: 55%;
+        background: #f9fafb;
+        color: #333;
+        font-weight: 500;
+    }
+
+    #data td {
+        text-align: right;
+        font-weight: 600;
+    }
+
+    /* Smooth number update feel */
+    td {
+        transition: 0.2s ease;
+    }
+</style>
+    
+<table id = "ladder">
+    <tr id = "header">
+        <th>#</th>
+        <th>Team</th>
+        <th>Q</th>
+    </tr>
+    
+    <tr id = "wyclif">
+        <td>-</td>
+        <td>Wyclif</td>
+        <td>-</td>
+    </tr>
+    
+    <tr id = "laburnum">
+        <td>-</td>
+        <td>Laburnum</td>
+        <td>-</td>
+    </tr>
+</table>
+
+<form id="teamSelect">
+    <div>
+        <input type="radio" id="lab" name="team" value="laburnum" checked>
+        <label for="lab">Laburnum</label>
+    </div>
+    <div>
+        <input type="radio" id="wyc" name="team" value="wyclif">
+        <label for="wyc">Wyclif</label>
+    </div>
+</form>
+
+<table id = "data">
+    <tr>
+        <th>Runs Scored</th>
+        <td></td>
+    </tr>
+    
+    <tr>
+        <th>Wickets Lost</th>
+        <td></td>
+    </tr>
+    
+    <tr>
+        <th>Team Average</th>
+        <td></td>
+    </tr>
+    
+    <tr>
+        <th>Runs Conceded</th>
+        <td></td>
+    </tr>
+    
+    <tr>
+        <th>Wickets Taken</th>
+        <td></td>
+    </tr>
+    
+    <tr>
+        <th>Opposition Average</th>
+        <td></td>
+    </tr>
+</table>
+
+<script>
+    function fillData([scored, lost, conceded, taken]) {
+        let data = document.getElementById("data").children[0];
+
+        let t_av = Math.round((scored / taken) * 1000) / 1000;
+        let o_av = Math.round((conceded / lost) * 1000) / 1000;
+
+        data.children[0].children[1].textContent = scored;
+        data.children[1].children[1].textContent = taken;
+        data.children[2].children[1].textContent = t_av;
+        data.children[3].children[1].textContent = conceded;
+        data.children[4].children[1].textContent = lost;
+        data.children[5].children[1].textContent = o_av;
+    }
+    
+    function parseScore(scoreStr) {
+      return scoreStr
+        .split("&")
+        .map(inn => inn.trim())
+        .map(inn => {
+          inn = inn.replace(/d/i, "").trim();
+
+          if (/^\d+$/.test(inn)) {
+            return [10, parseInt(inn, 10)];
+          }
+
+          const match = inn.match(/^(\d+)-(\d+)$/);
+          if (!match) {
+            throw new Error("Invalid score format: " + inn);
+          }
+
+          const wickets = parseInt(match[1], 10);
+          const runs = parseInt(match[2], 10);
+
+          return [wickets, runs];
+        });
+    }
+    
+    function main() {
+        console.log("Refreshed!");
+            
+        fetch("https://grassrootsapiproxy.cricket.com.au/scores/grades/4785e9ee-4630-4793-a8ef-05e67d92de8c/matches?roundId=f3ef1f64-7543-440c-8350-bfece0a8eed6&jsconfig=eccn%3Atrue")
+            .then(response => response.json())
+            .then(data => {
+                const getScore = name =>
+                  data.matches
+                    .flatMap(m => m.teams)
+                    .find(t => t.displayName.includes(name))?.scoreText;
+
+                let f = (a, b) => [a[0] + b[0], a[1] + b[1]];
+                    
+                let wyclif = parseScore(getScore("Wyclif")).reduce(f);
+                let glenWaverley = parseScore(getScore("Glen Waverley Hawks")).reduce(f);
+                let laburnum = parseScore(getScore("Laburnum")).reduce(f);
+                let blackburn = parseScore(getScore("Blackburn")).reduce(f);
+                
+                laburnum = [7, 174];
+                blackburn[0] += 5; blackburn[1] += 70;
+                
+                window.laburnumCurrent = [
+                    (2525 + laburnum[1]),
+                    (84 + blackburn[0]),
+                    (2476 + blackburn[1]),
+                    (70 + laburnum[0])
+                ];
+                
+                window.wyclifCurrent = [
+                    (2366 + wyclif[1]),
+                    (113 + glenWaverley[0]),
+                    (2479 + glenWaverley[1]),
+                    (84 + wyclif[0])
+                ];
+                
+                let laburnumQuotient = (
+                    ((2525 + laburnum[1]) * (84 + blackburn[0])) /
+                    ((2476 + blackburn[1]) * (70 + laburnum[0]))
+                );
+                
+                let wyclifQuotient = (
+                    ((2366 + wyclif[1]) * (113 + glenWaverley[0])) /
+                    ((2479 + glenWaverley[1]) * (84 + wyclif[0]))
+                );
+                
+                let wyclifRounded = Math.round(wyclifQuotient * 1000) / 1000;
+                let laburnumRounded = Math.round(laburnumQuotient * 1000) / 1000;
+
+                document.getElementById('wyclif').children[2].textContent = wyclifRounded;
+                document.getElementById('laburnum').children[2].textContent = laburnumRounded;
+                
+                let ladder = document.getElementById("ladder");
+                let tbody = ladder.tBodies[0];
+
+                let wyRow = document.getElementById("wyclif");
+                let labRow = document.getElementById("laburnum");
+
+                // Create sortable array
+                let teams = [
+                    { row: wyRow, q: wyclifRounded },
+                    { row: labRow, q: laburnumRounded }
+                ];
+
+                // Sort highest Q first
+                teams.sort((a, b) => b.q - a.q);
+
+                // Re-append rows in sorted order
+                teams.forEach((team, index) => {
+                    team.row.children[0].textContent = index === 0 ? "4th" : "5th";
+                    tbody.appendChild(team.row);
+                });
+                
+                if (document.getElementById("lab").checked) {
+                    fillData(window.laburnumCurrent);
+                } else {
+                    fillData(window.wyclifCurrent);
+                }
+
+                document.getElementById("teamSelect").addEventListener("change", e => {
+                    if (e.target.name !== "team") return;
+
+                    if (e.target.value === "laburnum") {
+                        fillData(window.laburnumCurrent);
+                    } else {
+                        fillData(window.wyclifCurrent);
+                    }
+                });
+            })
+    }; main();
+                               
+    setInterval(main, 10000);
+</script>
