@@ -39,11 +39,20 @@ a:hover { text-decoration: underline; }
     border: 1px solid lightgrey;
     border-radius: 20px;
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    color: black;
+    cursor: pointer;
 }
 
-.snippet.title {
+.snippet:hover { text-decoration: none; }
+.snippet:visited { color: black; }
+
+.snippet .title {
     font-weight: bold;
-    font-size: 40px;
+    margin-bottom: 5px;
+    font-size: 20px;
 }
 
 /*

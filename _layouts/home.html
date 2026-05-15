@@ -4,12 +4,17 @@
 
 <div class = "container">
     <div class = "posts">
+        <h1>
+            Recent posts
+        </h1>
+            
+        
         {% for post in site.posts %}
-            <div class = "snippet">
+            <a class = "snippet" href = "{{ post.url }}">
                 <div class = "title">{{ post.title }}</div>
                 <div class = "blurb">{{ post.blurb }}</div>
                 <img src = "{{ post.img }}">
-            </div>
+            </a>
         {% endfor %}
     </div>
 </div>
