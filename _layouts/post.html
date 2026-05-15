@@ -1,0 +1,20 @@
+{% include header.html %}
+
+<link rel = "stylesheet" href = "/assets/css/theme.css">
+
+<div class = "container">
+    <div class = "post">
+        <div class = "masthead">
+            <div class = "title">{{ post.title }}</div>
+            <div class = "blurb">{{ post.blurb }}</div>
+            <div class = "date">{{ post.date }}</div>
+            <img src = "{{ post.img }}">
+        </div>
+        
+        <div class = "content">
+            {{ post.content }}
+        </div>
+    </div>
+</div>
+
+{% include footer.html %}

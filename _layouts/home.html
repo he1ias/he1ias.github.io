@@ -1,0 +1,17 @@
+{% include header.html %}
+
+<link rel = "stylesheet" href = "/assets/css/theme.css">
+
+<div class = "container">
+    <div class = "posts">
+        {% for post in site.posts %}
+            <div class = "snippet">
+                <div class = "title">{{ post.title }}</div>
+                <div class = "blurb">{{ post.blurb }}</div>
+                <img src = "{{ post.img }}">
+            </div>
+        {% endfor %}
+    </div>
+</div>
+    
+{% include footer.html %}
